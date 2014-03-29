@@ -1,14 +1,9 @@
+#drawing going to be done in 3 three 
 import pygame
-from pygame.locals import *
-import sys
-import Creep
-import time
 import random
 
 right = 'right'
 left = 'left'
-
-
 
 def squeeze(num, max_num, min_num):
     '''
@@ -26,9 +21,11 @@ def squeeze(num, max_num, min_num):
         num = max_num
     return num
 
-class Fish(pygame.sprite.Sprite):
+
+
+class Creep(pygame.sprite.Sprite):
     
-    def __init__(self,screen,  fish_name, windowSize,main_bg_file, fish_speed = 10, x = 200, y = 200, fish_width = 0, fish_height = 0 ):
+    def __init__(self,screen,  fish_name, windowSize, main_bg_file, fish_speed = 10, x = 200, y = 200, fish_width = 0, fish_height = 0 ):
 
 
         #initialze important variables
@@ -92,8 +89,7 @@ class Fish(pygame.sprite.Sprite):
         self.fish_main_rect = self.fish_main_surf[0].get_rect()
         self.fish_main_rect2 = self.fish_main_surf[0].get_rect()
 
-
-    def update(self, direction_of_movement = 0):
+    def updatecreep(self, direction_of_movement = 0):
         # direction == 0 no movement
         # direction == 1 right
         # direction == 2 left
@@ -146,114 +142,3 @@ class Fish(pygame.sprite.Sprite):
         # blit clean rect on top of "dirty" screen
 
         self.screen.blit(self.fish_main_surf[self.fish_frame_num], self.fish_main_rect.topleft) #update pos of fish
-
-    def keys_pressed(self, k):
-        #this is to handle all movements
-        #when the user is holding a certain key down
-        if k[K_RIGHT]:
-            f.update(1)
-        if k[K_LEFT]:
-            f.update(2)
-        if k[K_UP]:
-            f.update(3)
-        if k[K_DOWN]:
-            f.update(4)
-
-
-bg_file = 'fishdish/fishtitle.png' # for starting screen background
-background = pygame.image.load(bg_file)
-
-#load up main surface with the height and width of the starting background image
-screen = pygame.display.set_mode([background.get_width(), background.get_height()], 0 , 32)
-
-main_bg_file = 'fishdish/fishtitle.png' # for game screen background
-main_bg = pygame.image.load(main_bg_file)
-
-pygame.init()
-windowSize = [background.get_width(), background.get_height()]
-
-pygame.display.set_caption("FISH GAME")
-
-
-#initialize f as an instance of the main fish class
-f =  Fish(screen, 'small_yellow_fish',windowSize, main_bg_file)
-
-
-#cpu fishes group
-cpu_fishes = pygame.sprite.Group()
-
-main_fish = pygame.sprite.Group()
-#add f fish to the main_fish sprite group
-main_fish.add(f)
-
-locations = [(100,100), (250,73), (75, 30), (300,300)]
-
-CREEP_FILENAMES = [
-    "green_fish",
-    "grey_fish",
-    "purple_fish",
-    "yellow_fish"
-    ]
-N_CREEPS = len(CREEP_FILENAMES)
-creeps = [] 
-
-for i in range(N_CREEPS):
-    creeps.append(Creep.Creep(screen, CREEP_FILENAMES[(i)],windowSize, main_bg_file))
-
-start_screen = True
-game = False
-            
-clock = pygame.time.Clock()
-
-while True:
-    if start_screen:
-        #display the starting screen background
-        screen.blit(background,(0,0))
-        pygame.display.update()
-        main_bg_off = True
-
-    if game:
-        for creep in creeps:
-            creep.updatecreep(random.choice([0,1,2,3,4])) #Sporatic movement, mostly just testing overlap problem
-        if main_bg_off:
-            screen.blit(main_bg,(0,0))
-            main_bg_off = False
-        f.keys_pressed(pygame.key.get_pressed())
-
-    for event in pygame.event.get():
-
-        if event.type == QUIT or (event.type == pygame.KEYDOWN and event.key == K_SPACE):
-            pygame.quit()
-            sys.exit()
-
-        if event.type == pygame.KEYDOWN and event.key == K_RIGHT:
-            f.fish_direction = right
-            f.update(1)
-        if event.type == pygame.KEYDOWN and event.key == K_LEFT:
-            f.fish_direction = left
-            f.update(2)
-        if event.type == pygame.KEYDOWN and event.key == K_UP:
-            f.update(3)
-        if event.type == pygame.KEYDOWN and event.key == K_DOWN:
-            f.update(4)
-
-
-        if (event.type == pygame.KEYDOWN and (event.key == pygame.K_RETURN) and start_screen):
-            #pressed enter
-            #switch to game mode
-            game = True
-            start_screen = False
-            
-            
-    clock.tick(30)
-
-    if game:
-        #so we only update when we are past the starting screen 
-        #otherwise we update for no reason
-        main_fish.update()
-        pygame.display.flip()
-
-
-
-        
-
