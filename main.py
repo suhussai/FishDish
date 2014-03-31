@@ -9,6 +9,24 @@ right = 'right'
 left = 'left'
 
 
+'''
+useful links:
+
+http://shinylittlething.com/2009/07/22/pygame-and-animated-sprites-take-2/
+
+http://thepythongamebook.com/en:pygame:step016
+
+https://www.pygame.org/docs/ref/surface.html
+
+https://www.pygame.org/docs/ref/rect.html#pygame.Rect.union
+
+http://dr0id.homepage.bluewin.ch/pygame_tutorial01.html#optimizations
+
+http://www.pygame.org/docs/tut/newbieguide.html
+
+'''
+
+
 
 def squeeze(num, max_num, min_num):
     '''
