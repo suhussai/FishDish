@@ -25,8 +25,26 @@ http://dr0id.homepage.bluewin.ch/pygame_tutorial01.html#optimizations
 http://www.pygame.org/docs/tut/newbieguide.html
 
 '''
+def add_a_new_cpu(screen, spritegroup, available_sprites):
+    Stype = random.choice(available_sprites)
+    position = get_a_corner(screen)
+    new = cpu_Fish(screen, Stype, right, random.random(), position[0], position[1])
+    spritegroup.add(new)
+    return spritegroup
 
-
+def get_a_corner(screen):
+    edges = ['left','right','top','bottom']
+    edge = random.choice(edges)
+    rv = None
+    if edge == 'left':
+        rv = [0, randint(0,300)]
+    elif edge == 'right':
+        rv = [400,randint(0,300)]
+    elif edge == 'top':
+        rv = [randint(0,400),0]
+    elif edge == 'bottom':
+        rv = [randint(0,400), 300]
+    return rv
 
 def squeeze(num, max_num, min_num):
     '''
@@ -119,6 +137,11 @@ class cpu_Fish(pygame.sprite.Sprite):
 
         self.fish_main_rect = self.fish_main_surf[0].get_rect()
 
+    def get_f_y(self):
+        return self.f_y
+    def get_f_x(self):
+        return self.f_x
+
     def update(self):
         #cpu fish direction is either from left to right
         #or right to left
@@ -146,9 +169,10 @@ class cpu_Fish(pygame.sprite.Sprite):
 #        print(d)
 #        print("the above is the way the fish is going ")
         if d == right:
-            self.f_x += self.f_s
+            self.f_x -= self.f_s
         elif d == left:
             self.f_x -= self.f_s
+        print(self.f_x,self.f_y)
             
 #        self.f_x = squeeze(self.f_x, windowSize[0] - self.f_w*2, self.f_w)
 #        self.f_y = squeeze(self.f_y, windowSize[1] - self.f_h*2, self.f_h)
@@ -412,10 +436,10 @@ main_fish = pygame.sprite.Group()
 
 #initialize f as an instance of the main fish class
 f = Fish(screen, '6main_fish')
-cpu_f1 = cpu_Fish(screen, 'yellow_fish', right, 10, 0, 25)
+#cpu_f1 = cpu_Fish(screen, 'yellow_fish', right, 10, 0, 25)
 cpu_f2 = cpu_Fish(screen, 'blue_fish', right, 10, 0, 200)
 
-cpu_fishes.add(cpu_f1)
+#cpu_fishes.add(cpu_f1)
 cpu_fishes.add(cpu_f2)
 
 #add f fish to the main_fish sprite group
@@ -474,6 +498,16 @@ while True:
         #otherwise we update for no reason
         cpu_fishes.update()
         main_fish.update()
+        cpulist = cpu_fishes.sprites()
+        for fish in cpulist:
+            if fish.get_f_y() > 300:
+                cpu_fishes.remove(fish)
+            elif fish.get_f_y() < -60:
+                cpu_fishes.remove(fish)
+            if fish.get_f_x() > 470:
+                cpu_fishes.remove(fish)
+            elif fish.get_f_x() < -60:
+                cpu_fishes.remove(fish)
 #        print(rl)
         pygame.display.update(rl)
         rl = []
