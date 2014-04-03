@@ -25,12 +25,12 @@ http://dr0id.homepage.bluewin.ch/pygame_tutorial01.html#optimizations
 http://www.pygame.org/docs/tut/newbieguide.html
 
 '''
-def add_a_new_cpu(screen, spritegroup, available_sprites):
+def add_a_new_cpu(screen, available_sprites):
+    print("a")
     Stype = random.choice(available_sprites)
     position = get_a_corner(screen)
     new = cpu_Fish(screen, Stype, right, random.random(), position[0], position[1])
-    spritegroup.add(new)
-    return spritegroup
+    return new
 
 def get_a_corner(screen):
     edges = ['left','right','top','bottom']
@@ -445,12 +445,13 @@ main_fish = pygame.sprite.Group()
 
 #initialize f as an instance of the main fish class
 f = Fish(screen, '6main_fish')
-#cpu_f1 = cpu_Fish(screen, 'yellow_fish', right, 10, 0, 25)
+available_sprites = ['yellow_fish','blue_fish']
+cpu_f1 = cpu_Fish(screen, 'yellow_fish', right, 10, 0, 25)
 cpu_f2 = cpu_Fish(screen, 'blue_fish', right, 10, 0, 200)
-
-#cpu_fishes.add(cpu_f1)
+cpu_f3 = cpu_Fish(screen, 'blue_fish', right, 10,0,200)
+cpu_fishes.add(cpu_f1)
 cpu_fishes.add(cpu_f2)
-
+cpu_fishes.add(cpu_f3)
 #add f fish to the main_fish sprite group
 main_fish.add(f)
 
@@ -500,7 +501,7 @@ while True:
             start_screen = False
             
             
-    clock.tick(10)
+    clock.tick(30)
 
     if game:
         #so we only update when we are past the starting screen 
@@ -511,12 +512,16 @@ while True:
         for fish in cpulist:
             if fish.get_f_y() > 300:
                 cpu_fishes.remove(fish)
+                cpu_fishes.add(add_a_new_cpu(screen, available_sprites))
             elif fish.get_f_y() < -60:
                 cpu_fishes.remove(fish)
+                cpu_fishes.add(add_a_new_cpu(screen, available_sprites))
             if fish.get_f_x() > 470:
                 cpu_fishes.remove(fish)
+                cpu_fishes.add(add_a_new_cpu(screen, available_sprites))
             elif fish.get_f_x() < -60:
                 cpu_fishes.remove(fish)
+                cpu_fishes.add(add_a_new_cpu(screen, available_sprites))
 #        print(rl)
         pygame.display.update(rl)
         rl = []
