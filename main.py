@@ -1,7 +1,7 @@
 import pygame
 from pygame.locals import *
 import sys
-
+import math
 import time
 import random
 from random import randint
@@ -45,6 +45,11 @@ def get_a_corner(screen):
     elif edge == 'bottom':
         rv = [randint(0,400), 300]
     return rv
+
+def deg_to_rad(deg):
+    rad = (deg/180) * math.pi
+    return rad
+
 
 def squeeze(num, max_num, min_num):
     '''
@@ -90,6 +95,11 @@ class cpu_Fish(pygame.sprite.Sprite):
 
         self.f_y = y
 
+        self.vector = randint(0,360) #Pick a random direction (in degrees)
+        if self.vector >= 90 and self.vector <= 270:
+            self.fish_direction = right #everything is backwards (keep in mind)
+        else:
+            self.fish_direction = left
 
 
         #starting width and height of fish
@@ -168,10 +178,9 @@ class cpu_Fish(pygame.sprite.Sprite):
         d = self.fish_direction
 #        print(d)
 #        print("the above is the way the fish is going ")
-        if d == right:
-            self.f_x -= self.f_s
-        elif d == left:
-            self.f_x -= self.f_s
+        self.f_x -= self.f_s * math.cos( (deg_to_rad(self.vector)))
+        self.f_y -= self.f_s * math.sin( (deg_to_rad(self.vector)))
+
         print(self.f_x,self.f_y)
             
 #        self.f_x = squeeze(self.f_x, windowSize[0] - self.f_w*2, self.f_w)
