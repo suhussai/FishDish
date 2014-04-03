@@ -29,17 +29,20 @@ def add_a_new_cpu(screen, available_sprites):
     print("a")
     Stype = random.choice(available_sprites)
     position = get_a_corner(screen)
-    new = cpu_Fish(screen, Stype, right, random.random(), position[0], position[1])
+    new = cpu_Fish(screen, Stype, right, random.uniform(0.1,1.0), position[0], position[1])
+    print(new.get_f_x(), new.get_f_y())
     return new
 
 def get_a_corner(screen):
     edges = ['left','right','top','bottom']
     edge = random.choice(edges)
+    print(edge)
     rv = None
     if edge == 'left':
         rv = [0, randint(0,300)]
     elif edge == 'right':
         rv = [400,randint(0,300)]
+        #rv = [200,200]
     elif edge == 'top':
         rv = [randint(0,400),0]
     elif edge == 'bottom':
@@ -88,11 +91,13 @@ class cpu_Fish(pygame.sprite.Sprite):
         self.fish_direction = directionTo
         
         #starting x and y for fish
+        '''
         if self.fish_direction == right:
             self.f_x = 0
         elif self.fish_direction == left:
             self.f_x = windowSize[0]
-
+            '''
+        self.f_x = x
         self.f_y = y
 
         self.vector = randint(0,360) #Pick a random direction (in degrees)
@@ -181,7 +186,7 @@ class cpu_Fish(pygame.sprite.Sprite):
         self.f_x -= self.f_s * math.cos( (deg_to_rad(self.vector)))
         self.f_y -= self.f_s * math.sin( (deg_to_rad(self.vector)))
 
-        print(self.f_x,self.f_y)
+        #print(self.f_x,self.f_y)
             
 #        self.f_x = squeeze(self.f_x, windowSize[0] - self.f_w*2, self.f_w)
 #        self.f_y = squeeze(self.f_y, windowSize[1] - self.f_h*2, self.f_h)
@@ -449,6 +454,7 @@ available_sprites = ['yellow_fish','blue_fish']
 cpu_f1 = cpu_Fish(screen, 'yellow_fish', right, 10, 0, 25)
 cpu_f2 = cpu_Fish(screen, 'blue_fish', right, 10, 0, 200)
 cpu_f3 = cpu_Fish(screen, 'blue_fish', right, 10,0,200)
+
 cpu_fishes.add(cpu_f1)
 cpu_fishes.add(cpu_f2)
 cpu_fishes.add(cpu_f3)
