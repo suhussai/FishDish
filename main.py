@@ -29,7 +29,7 @@ def add_a_new_cpu(screen, available_sprites):
     print("a")
     Stype = random.choice(available_sprites)
     position = get_a_corner(screen)
-    new = cpu_Fish(screen, Stype, right, random.uniform(0.1,1.0), position[0], position[1])
+    new = cpu_Fish(screen, Stype, right, random.uniform(0.2,2.5), position[0], position[1])
     print(new.get_f_x(), new.get_f_y())
     return new
 
@@ -39,14 +39,14 @@ def get_a_corner(screen):
     print(edge)
     rv = None
     if edge == 'left':
-        rv = [0, randint(0,300)]
+        rv = [-30, randint(0,300)]
     elif edge == 'right':
-        rv = [400,randint(0,300)]
+        rv = [470,randint(0,300)]
         #rv = [200,200]
     elif edge == 'top':
-        rv = [randint(0,400),0]
+        rv = [randint(0,400),-30]
     elif edge == 'bottom':
-        rv = [randint(0,400), 300]
+        rv = [randint(0,400), 290]
     return rv
 
 def deg_to_rad(deg):
@@ -200,8 +200,11 @@ class cpu_Fish(pygame.sprite.Sprite):
     def blito(self):
         #displays the main_rect fish frame and handles the updating of the frame count
         #at the topleft coordinates of the fish_rect of the instance of the fish
-
+        T = pygame.time.get_ticks()
         if self.fish_direction == right:
+            #If the fish is facing left flip it immediately 
+            if self.fish_frame_num > 5: 
+                self.fish_frame_num = 0
             T = pygame.time.get_ticks()
             #print(T)
             if T % 15 <= 2: #Take cycle skips into consideration
@@ -210,7 +213,9 @@ class cpu_Fish(pygame.sprite.Sprite):
                     self.fish_frame_num = 0 #first right facing frame
 
         elif self.fish_direction == left:
-            T = pygame.time.get_ticks()
+            #If the fish is facing right flip it immediately 
+            if self.fish_frame_num < 5: 
+                self.fish_frame_num = 6
             #print(T)
             if T % 15 <= 2: #Take cycle skips into consideration
                 self.fish_frame_num += 1
@@ -381,6 +386,7 @@ class Fish(pygame.sprite.Sprite):
         T = pygame.time.get_ticks()
 
         if self.fish_direction == right:
+            #If the fish is facing left flip it immediately 
             if self.fish_frame_num > 5:
                 self.fish_frame_num = 0
             if T % 15 == 2: #Take cycle skips into consideration
@@ -390,9 +396,9 @@ class Fish(pygame.sprite.Sprite):
                  #first right facing frame
 
         elif self.fish_direction == left:
-            if self.fish_frame_num < 5:
+            #If the fish is facing right flip it immediately 
+            if self.fish_frame_num < 5: 
                 self.fish_frame_num = 6
-                #If the fish is facing left flip it immediately 
             if T % 15 <= 2: #Take cycle skips into consideration
                 self.fish_frame_num += 1
                 if self.fish_frame_num >= 9:
@@ -416,24 +422,31 @@ class Fish(pygame.sprite.Sprite):
         # and then we blit it on before the sprite
 #        self.screen.blit(dirtyrect, (self.fish_main_rect.topleft[0], self.fish_main_rect.topleft[1]))
         # blit clean rect on top of "dirty" screen
-        Need_to_resolve = []
+        Need_to_remove =  False
         for fishes in cpu_fishes.sprites():
             if (self.fish_main_rect.colliderect(fishes.fish_main_rect)):
 #                rl.remove(fishes.fish_main_rect) # remove that #no need to remove !!!
 #                rl.remove(self.fish_main_rect) # no need to remove
+                cpuA = fishes.fish_main_rect.width * fishes.fish_main_rect.height
+                mainA = self.fish_main_rect.width * self.fish_main_rect.height
 
+                if cpuA > mainA:
+                    GAMEOVER = True
+                    print('GAMEOVER')
+                else:
+                    self.grow()
+                    Need_to_remove = fishes
+                    cpu_fishes.remove(Need_to_remove) #TODO: Need to redraw the background after deleting the fish
+                    cpu_fishes.add(add_a_new_cpu(screen, available_sprites))
+
+                
                 a = self.screen.blit(fishes.fish_main_surf[fishes.fish_frame_num], fishes.fish_main_rect.topleft)
                 b = self.screen.blit(self.fish_main_surf[self.fish_frame_num], self.fish_main_rect.topleft)
-                Need_to_resolve.append(fish)
+                #Need_to_resolve.append(fish)
                 rl.append(a)
                 rl.append(b)
                 
                 print("done magic")
-
-        for cpu in Need_to_resolve:
-            cpuA = cpu.f_w * cpu.f_h
-            mainA = self.f_w * self.f_h
-            print(cpuA,mainA)
 
         self.fish_main_rect = self.screen.blit(self.fish_main_surf[self.fish_frame_num], self.fish_main_rect.topleft) #update pos of fis
         rl.append(self.fish_main_rect)
@@ -449,6 +462,9 @@ class Fish(pygame.sprite.Sprite):
             f.update(3)
         if k[K_DOWN]:
             f.update(4)
+
+    def grow(self):
+        pass
 
 
 rl = []
@@ -476,14 +492,17 @@ main_fish = pygame.sprite.Group()
 
 #initialize f as an instance of the main fish class
 f = Fish(screen, '6main_fish')
-available_sprites = ['yellow_fish','blue_fish']
-cpu_f1 = cpu_Fish(screen, 'yellow_fish', right, 10, 0, 25)
-cpu_f2 = cpu_Fish(screen, 'blue_fish', right, 10, 0, 200)
-cpu_f3 = cpu_Fish(screen, 'blue_fish', right, 10,0,200)
+available_sprites = ['yellow_fish','blue_fish','green_fish','grey_fish','purple_fish','small_yellow_fish']
+NUMBER_OF_CPU = 15
 
-cpu_fishes.add(cpu_f1)
-cpu_fishes.add(cpu_f2)
-cpu_fishes.add(cpu_f3)
+#cpu_f1 = cpu_Fish(screen, 'yellow_fish', right, 10, 0, 25)
+#cpu_f2 = cpu_Fish(screen, 'blue_fish', right, 10, 0, 200)
+#cpu_f3 = cpu_Fish(screen, 'blue_fish', right, 10,0,200)
+for i in range(NUMBER_OF_CPU):
+    cpu_fishes.add(add_a_new_cpu(screen,available_sprites)) 
+#cpu_fishes.add(cpu_f1)
+#cpu_fishes.add(cpu_f2)
+#cpu_fishes.add(cpu_f3)
 #add f fish to the main_fish sprite group
 main_fish.add(f)
 
@@ -549,7 +568,7 @@ while True:
             elif fish.get_f_y() < -60:
                 cpu_fishes.remove(fish)
                 cpu_fishes.add(add_a_new_cpu(screen, available_sprites))
-            if fish.get_f_x() > 470:
+            if fish.get_f_x() > 500:
                 cpu_fishes.remove(fish)
                 cpu_fishes.add(add_a_new_cpu(screen, available_sprites))
             elif fish.get_f_x() < -60:
@@ -560,5 +579,7 @@ while True:
         rl = []
 
 
+
+        
 
         
