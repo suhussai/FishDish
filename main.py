@@ -26,11 +26,10 @@ http://www.pygame.org/docs/tut/newbieguide.html
 
 '''
 def add_a_new_cpu(screen, available_sprites):
-    print("a")
     Stype = random.choice(available_sprites)
     position = get_a_corner(screen)
     new = cpu_Fish(screen, Stype, right, random.uniform(0.1,1.0), position[0], position[1])
-    print(new.get_f_x(), new.get_f_y())
+    #print(new.get_f_x(), new.get_f_y())
     return new
 
 def get_a_corner(screen):
